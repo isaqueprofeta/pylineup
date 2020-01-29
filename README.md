@@ -2,6 +2,13 @@
 
 PyLineUP is a micro-framework to do some python scripting with queued scheduling and history, it was first created to do some ETL (Extract-Transform-Load) jobs.
 
+Special thanks for the great projetcs:
+- [celery](http://www.celeryproject.org/)
+- [flower](https://github.com/mher/flower)
+- [redis](https://redis.io/)
+- [redisbeat](https://github.com/liuliqiang/redisbeat)
+- [click](https://click.palletsprojects.com/)
+
 ## Prerequisites:
 
 1) Before anything install python v3.6, docker and docker-compose in your preferred way.
