@@ -13,10 +13,15 @@ PyLineUP is a micro-framework to do some python scripting with queued scheduling
 
 ## How to use:
 
-### 1) Clone the project:
+### 1) Clone the project and configure your timezone:
 
 ```sh
 git clone https://github.com/isaqueprofeta/pylineup.git
+```
+
+```sh
+cp config.ini.example config.ini
+vim config.ini
 ```
 
 ### 2) Dump your python scripts in jobs folder of this project, and then add the following "little" header for each of them:
