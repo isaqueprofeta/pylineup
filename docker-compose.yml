@@ -1,0 +1,67 @@
+version: '2'
+
+volumes:
+  redis_data:
+    driver: local
+
+services:
+  redis:
+    container_name: redis
+    restart: unless-stopped
+    image: redis
+    volumes:
+      - redis_data:/data
+    ports:
+      - '6379:6379'
+
+  worker:
+    container_name: worker
+    hostname: worker
+    restart: unless-stopped
+    build:
+      context: .
+    volumes:
+      - ./:/pylineup
+    command: ["celery", "worker", "--app=app:pylineup", "--hostname=jobs@worker",
+              "--loglevel=INFO", "--pidfile=/tmp/celeryworker.pid",
+              "--logfile=/pylineup/logs/celeryworker.log"]
+    depends_on:
+      - redis
+    stdin_open: true
+    tty: true
+
+  beat:
+    container_name: beat
+    hostname: beat
+    restart: unless-stopped
+    build:
+      context: .
+    volumes:
+      - ./:/pylineup
+    command: ["celery", "beat", "--app=app:pylineup",
+              "--pidfile=/tmp/celerybeat.pid", "--loglevel=INFO",
+              "--logfile=/pylineup/logs/celerybeat.log"]
+    depends_on:
+      - worker
+      - redis
+    stdin_open: true
+    tty: true
+
+  flower:
+    container_name: flower
+    hostname: flower
+    restart: unless-stopped
+    build:
+      context: .
+    volumes:
+      - ./:/pylineup
+    command: ["celery", "flower", "--app=app:pylineup", "--port=80",
+              "--broker=redis://redis:6379/0",
+              "--broker_api=redis://redis:6379/0",
+              "--basic_auth=admin:admin"]
+    ports:
+      - '80:80'
+    depends_on:
+      - worker
+      - beat
+      - redis

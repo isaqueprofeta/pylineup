@@ -1,0 +1,7 @@
+[app]
+timezone=America/Sao_Paulo
+
+[redis]
+broker=redis://redis:6379
+backend=redis://redis:6379
+scheduler=redis://redis:6379

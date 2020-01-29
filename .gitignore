@@ -1,0 +1,6 @@
+__pycache__/
+lib/__pycache__/
+wheels/
+.vscode/
+config.ini
+.env
