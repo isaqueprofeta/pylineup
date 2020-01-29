@@ -178,6 +178,11 @@ Take note that there's a function that define the schedule and you shoud change 
   Ending: test_job
   ```
 
+- See everything in the flower web viewer:
+  - URL: http://localhost
+  - User: admin
+  - Password: admin
+
 All container logs (INFO level by default) are available in logs directory:
 
 ```sh
