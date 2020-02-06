@@ -1,13 +1,14 @@
 # PyLineUP - A crontab on python steroids
 
-PyLineUP is a micro-framework to do some python scripting with queued scheduling and history, it was first created to do some ETL (Extract-Transform-Load) jobs.
+PyLineUP is a micro-framework to do some python scripting with queued scheduling and history, it was first created to do some ETL (Extract-Transform-Load) jobs. Special thanks for the great projects used on this:
 
-Special thanks for the great projetcs:
-- [celery](http://www.celeryproject.org/)
-- [flower](https://github.com/mher/flower)
-- [redis](https://redis.io/)
-- [redisbeat](https://github.com/liuliqiang/redisbeat)
-- [click](https://click.palletsprojects.com/)
+- **Celery** is an asynchronous task queue/job queue based on distributed message using workers
+- **Celery Beat** is a scheduler; It kicks off tasks at regular intervals for celery workers
+- **Redis** is a key/value database used to keep the queue and schedule for Celery/Beat
+- **Redisbeat** from liuliqiang is a Beat Scheduler that stores periodic tasks and their status in a Redis Datastore
+- **Click** is a Python package for creating beautiful command line interfaces
+- **Flower** is a web based tool for monitoring and administrating Celery clusters
+- **Docker** is a tool designed to make it easier to create, deploy, and run applications by using containers.
 
 ## Prerequisites:
 
