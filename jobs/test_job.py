@@ -1,4 +1,4 @@
-from app import pylineup
+from pylineup import pylineup
 import os
 
 job_name = os.path.splitext(os.path.basename(__file__))[0]
@@ -27,8 +27,6 @@ def task():
     # Make your imports here at top
     from time import sleep
 
-    print("Starting: ", job_name)
-
     # Extract
     my_data = ['My', 'result', 'from', 'a',
                'not', 'so', 'complex', 'logic']
@@ -37,9 +35,7 @@ def task():
 
     # Transform
     my_beatiful_result = my_plus_data.join(my_data)
+    sleep(10)
 
     # Load
-    sleep(10)
     print(my_beatiful_result)
-
-    print("Ending: ", job_name)

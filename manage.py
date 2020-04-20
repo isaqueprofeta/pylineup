@@ -4,14 +4,14 @@ from subprocess import run
 
 
 @click.group()
-def pylineup():
+def manage():
     """
     Controls for pylineup schedule micro-framework
     """
     pass
 
 
-@pylineup.group()
+@manage.group()
 def application():
     """
     Simplified controls for container/service management
@@ -96,7 +96,7 @@ def restart():
     run(command, shell=True)
 
 
-@pylineup.group()
+@manage.group()
 def schedule():
     """
     Simplified controls for schedule management
@@ -113,8 +113,8 @@ def start_all():
     command = """
         echo 'Starting all schedules from jobs...';
         docker exec -i worker
-        python -c 'from app import start_all_schedules;
-                   start_all_schedules()'
+        python -c 'from pylineup.scheduler import Scheduler;
+                   Scheduler.start_all_schedules()'
         """
     run(command.replace('\n', ' '), shell=True)
 
@@ -128,8 +128,8 @@ def show():
     command = """
         echo 'Listing current schedules...';
         docker exec -i worker
-        python -c 'from app import show_all_schedules;
-                   show_all_schedules()'
+        python -c 'from pylineup.scheduler import Scheduler;
+                   Scheduler.show_all_schedules()'
         """
     run(command.replace('\n', ' '), shell=True)
 
@@ -146,8 +146,8 @@ def start(job):
     command = """
         echo 'Starting schedule...';
         docker exec -i worker
-        python -c 'from app import start_an_schedule;
-                   start_an_schedule("%s")'
+        python -c 'from pylineup.scheduler import Scheduler;
+                   Scheduler.start_an_schedule("%s")'
         """ % (job)
     run(command.replace('\n', ' '), shell=True)
 
@@ -164,13 +164,13 @@ def stop(job):
     command = """
         echo 'Removing schedule...';
         docker exec -i beat
-        python -c 'from app import stop_an_schedule;
-                   stop_an_schedule("%s")'
+        python -c 'from pylineup.scheduler import Scheduler;
+                   Scheduler.stop_an_schedule("%s")'
         """ % (job)
     run(command.replace('\n', ' '), shell=True)
 
 
-@pylineup.group()
+@manage.group()
 def job():
     """
     Simplified controls for job management
@@ -186,7 +186,7 @@ def list():
 
     command = """
         docker exec -i worker
-        sh -c 'celery -A app:pylineup inspect registered'
+        sh -c 'celery -A pylineup inspect registered'
         """
     run(command.replace('\n', ' '), shell=True)
 
@@ -199,7 +199,7 @@ def running():
 
     command = """
         docker exec -i worker
-        sh -c 'celery -A app:pylineup inspect active'
+        sh -c 'celery -A pylineup inspect active'
         """
     run(command.replace('\n', ' '), shell=True)
 
@@ -217,7 +217,7 @@ def execute(job):
 
     command = """
         docker exec -i worker
-        sh -c 'celery -A app:pylineup call %s'
+        sh -c 'celery -A pylineup call %s'
         """ % (job_full_name)
     run(command.replace('\n', ' '), shell=True)
 
@@ -235,7 +235,7 @@ def terminate(job):
 
     command = """
         docker exec -i worker
-        sh -c 'celery -A app:pylineup control revoke %s'
+        sh -c 'celery -A pylineup control revoke %s'
         """ % (job_full_name)
     run(command.replace('\n', ' '), shell=True)
 
@@ -268,10 +268,10 @@ def celery_stats():
 
     command = """
         docker exec -i worker
-        sh -c 'celery -A app:pylineup inspect stats'
+        sh -c 'celery -A pylineup inspect stats'
         """
     run(command.replace('\n', ' '), shell=True)
 
 
 if __name__ == '__main__':
-    pylineup()
+    manage()
