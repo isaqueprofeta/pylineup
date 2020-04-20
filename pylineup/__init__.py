@@ -1,5 +1,6 @@
 from celery import Celery
 from .config import Config
+from importlib import import_module
 
 
 def discover_jobs():
@@ -23,7 +24,9 @@ pylineup = Celery('pylineup')
 pylineup.config_from_object(Config())
 
 # Load the jobs
-pylineup.autodiscover_tasks(
-    discover_jobs(),
-    force=True
-)
+for job in discover_jobs():
+    try:
+        job_module = import_module(job)
+        job_module.task.signature()
+    except Exception as e:
+        print(f'Error loading job: {job} because: {e}')
