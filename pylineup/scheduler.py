@@ -8,8 +8,11 @@ class Scheduler():
         """
         import importlib
         job_module = importlib.import_module(
-                                    'jobs.' + job_name.split(".")[0])
-        job_module.schedule()
+                                    f'jobs.{job_name.split(".")[0]}')
+        try:
+            job_module.schedule()
+        except Exception as e:
+            print(f"Failed to create schedule for {job_name}: {e} ")
 
     def stop_an_schedule(job_name):
         """
@@ -18,11 +21,11 @@ class Scheduler():
         from pylineup import pylineup
         from redisbeat.scheduler import RedisScheduler
 
-        schduler = RedisScheduler(app=pylineup)
-
-        result = schduler.remove(job_name)
-
-        print("Removed schedule for job: ", job_name, result)
+        try:
+            schduler = RedisScheduler(app=pylineup)
+            schduler.remove(job_name)
+        except Exception as e:
+            print(f"Failed to remove schedule for {job_name}: {e} ")
 
     def start_all_schedules():
         """
@@ -32,11 +35,24 @@ class Scheduler():
         from os import listdir
         import importlib
 
-        for job in listdir('./jobs'):
-            if job.endswith('.py') and not job.startswith('_'):
-                job_module = importlib.import_module(
-                                            'jobs.' + job.split(".")[0])
-                job_module.schedule()
+        # Discover all schedule for jobs on jobs folder
+        jobs = [
+            'jobs.' + job.split(".")[0]
+            for job in listdir('./jobs')
+            if (job.endswith('.py') and
+                not job.startswith('_'))
+        ]
+
+        # Load the jobs
+        if len(jobs) > 0:
+            for job in jobs:
+                try:
+                    job_module = importlib.import_module(job)
+                    job_module.schedule()
+                except Exception as e:
+                    print(f'Error creating schedule for {job}: {e}')
+        else:
+            print('No jobs found!')
 
     def show_all_schedules():
         """
@@ -53,18 +69,23 @@ class Scheduler():
             for entry in scheduler.rdb.zrange(scheduler.key, 0, -1)
         ]
 
-        for task in data:
-            if isinstance(task.schedule, celery.schedules.schedule):
-                print("""Job: %s each %s last execution in %s"""
-                      % (task.task,
-                          task.schedule.human_seconds,
-                          task.last_run_at))
-            elif isinstance(task.schedule, celery.schedules.crontab):
-                print("""Job: %s crontab %s %s %s %s %s last execution in %s"""
-                      % (task.task,
-                          task.schedule._orig_minute,
-                          task.schedule._orig_hour,
-                          task.schedule._orig_day_of_month,
-                          task.schedule._orig_month_of_year,
-                          task.schedule._orig_day_of_week,
-                          task.last_run_at))
+        if len(data) > 0:
+            for task in data:
+                if isinstance(task.schedule, celery.schedules.schedule):
+                    print(
+                        f"Job: {task.task}"
+                        f" each {task.schedule.human_seconds}"
+                        f" last execution in {task.last_run_at}"
+                    )
+                elif isinstance(task.schedule, celery.schedules.crontab):
+                    print(
+                        f"Job: {task.task}"
+                        f" crontab {task.schedule._orig_minute}"
+                        f" {task.schedule._orig_hour}"
+                        f" {task.schedule._orig_day_of_month}"
+                        f" {task.schedule._orig_month_of_year}"
+                        f" {task.schedule._orig_day_of_week}"
+                        f" last execution in {task.last_run_at}"
+                    )
+        else:
+            print('No active schedules found.')

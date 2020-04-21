@@ -18,8 +18,7 @@ def schedule():
         'schedule': timedelta(seconds=30),
         'args': ()
     })
-    print("Schedule of %s: %s"
-          % (job_name, result))
+    print(f"Schedule of {job_name}, {result}")
 
 
 @pylineup.task()

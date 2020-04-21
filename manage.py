@@ -143,12 +143,12 @@ def start(job):
     Start the schedule for a job
     """
 
-    command = """
+    command = f"""
         echo 'Starting schedule...';
         docker exec -i worker
         python -c 'from pylineup.scheduler import Scheduler;
-                   Scheduler.start_an_schedule("%s")'
-        """ % (job)
+                   Scheduler.start_an_schedule("{job}")'
+        """
     run(command.replace('\n', ' '), shell=True)
 
 
@@ -161,12 +161,12 @@ def stop(job):
     Remove the schedule for a job
     """
 
-    command = """
+    command = f"""
         echo 'Removing schedule...';
         docker exec -i beat
         python -c 'from pylineup.scheduler import Scheduler;
-                   Scheduler.stop_an_schedule("%s")'
-        """ % (job)
+                   Scheduler.stop_an_schedule("{job}")'
+        """
     run(command.replace('\n', ' '), shell=True)
 
 
@@ -213,12 +213,10 @@ def execute(job):
     Execute a job manually
     """
 
-    job_full_name = 'jobs.' + job + '.task'
-
-    command = """
+    command = f"""
         docker exec -i worker
-        sh -c 'celery -A pylineup call %s'
-        """ % (job_full_name)
+        sh -c 'celery -A pylineup call jobs.{job}.task'
+        """
     run(command.replace('\n', ' '), shell=True)
 
 
@@ -231,12 +229,10 @@ def terminate(job):
     Kill/Stop a job running
     """
 
-    job_full_name = 'jobs.' + job + '.task'
-
-    command = """
+    command = f"""
         docker exec -i worker
-        sh -c 'celery -A pylineup control revoke %s'
-        """ % (job_full_name)
+        sh -c 'celery -A pylineup control revoke jobs.{job}.task'
+        """
     run(command.replace('\n', ' '), shell=True)
 
 
@@ -249,14 +245,12 @@ def script(job):
     Run job as a python script wihout queuing
     """
 
-    job_full_path = 'jobs.' + job
-
-    command = """
-        echo 'Running %s as a script...';
+    command = f"""
+        echo 'Running {job} as a script...';
         docker exec -i worker
-        python -c 'from %s import task;
+        python -c 'from jobs.{job} import task;
                    task()'
-        """ % (job, job_full_path)
+        """
     run(command.replace('\n', ' '), shell=True)
 
 
