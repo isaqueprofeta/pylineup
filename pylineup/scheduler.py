@@ -47,7 +47,8 @@ class Scheduler():
             if len(jobs) > 0:
                 for job in jobs:
                     try:
-                        job_module = importlib.import_module(job)
+                        job_module = importlib.import_module(
+                                                job.replace('.task', ''))
                         job_module.schedule()
                     except Exception as e:
                         print(f'Error creating schedule for {job}: {e}')
