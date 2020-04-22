@@ -30,29 +30,29 @@ class Scheduler():
     def start_all_schedules():
         """
         Start all schedules from schedule function
-        on each job inside jobs folder
+        for each job registered in celery workers
         """
-        from os import listdir
+        from pylineup import pylineup
         import importlib
 
-        # Discover all schedule for jobs on jobs folder
-        jobs = [
-            'jobs.' + job.split(".")[0]
-            for job in listdir('./jobs')
-            if (job.endswith('.py') and
-                not job.startswith('_'))
-        ]
+        # Discover all workers running
+        all_jobs = pylineup.control.inspect()
+        workers = list(all_jobs.registered())
 
-        # Load the jobs
-        if len(jobs) > 0:
-            for job in jobs:
-                try:
-                    job_module = importlib.import_module(job)
-                    job_module.schedule()
-                except Exception as e:
-                    print(f'Error creating schedule for {job}: {e}')
-        else:
-            print('No jobs found!')
+        for worker in workers:
+            # Find jobs registered in workers
+            jobs = pylineup.control.inspect(
+                            [worker]).registered()[worker]
+            # Load the jobs
+            if len(jobs) > 0:
+                for job in jobs:
+                    try:
+                        job_module = importlib.import_module(job)
+                        job_module.schedule()
+                    except Exception as e:
+                        print(f'Error creating schedule for {job}: {e}')
+            else:
+                print(f'No jobs found in worker {worker}')
 
     def show_all_schedules():
         """
