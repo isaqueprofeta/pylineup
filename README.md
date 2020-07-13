@@ -12,9 +12,9 @@ PyLineUP is a micro-framework to do some python scripting with queued scheduling
 
 ## Prerequisites:
 
-1) Before anything install python v3.6, docker and docker-compose in your preferred way.
+1. Before anything install python v3.6, docker and docker-compose in your preferred way.
 
-2) Now install click (if you dont do this, read manage.py to understand the helper):
+2. Now install click (if you dont do this, read manage.py to understand the helper):
    ```sh
    pip install click
    ```
@@ -35,11 +35,13 @@ vim config.ini
 ### 2) Dump your python scripts in jobs folder of this project, and then add the following "little" header for each of them:
 
 ```python
-import os
-from app import pylineup
+from pylineup import pylineup
 from datetime import timedelta
+from celery.utils.log import get_task_logger
+import os
 
 job_name = os.path.splitext(os.path.basename(__file__))[0]
+logger = get_task_logger(__name__)
 
 MY_SCHEDULE = timedelta(seconds=300)
 
@@ -56,13 +58,12 @@ def schedule():
         'schedule': MY_SCHEDULE,
         'args': ()
     })
-    print("Schedule of %s: %s"
-          % (job_name, result))
+    print(f"Schedule of {job_name}: {result}")
 
 
 @pylineup.task()
 def task():
-####### WROTE YOUR SCRIPT FROM HERE #######
+####### WRITE YOUR SCRIPT FROM HERE #######
 ```
 
 Take note that there's a function that define the schedule and you shoud change the MY_SCHEDULE variable for your needs (or just comment out/remove the whole function to not schedule it):
@@ -96,7 +97,7 @@ Take note that there's a function that define the schedule and you shoud change 
   ```sh
   # Manually
   docker-compose up -d
-  
+
   # Using the helper
   ./manage.py application install
   ```
@@ -105,7 +106,7 @@ Take note that there's a function that define the schedule and you shoud change 
 
   ```sh
   ./manage.py application restart
-  
+
   Removing services without wiping log data...
   Stopping flower ... done
   Stopping beat   ... done
@@ -121,23 +122,22 @@ Take note that there's a function that define the schedule and you shoud change 
   Creating flower ... done
   Creating worker ... done
   Creating beat ... done
-  Creating flower ... done 
+  Creating flower ... done
   ```
 
 - Show container status
 
   ```sh
   ./manage.py application status
-  
-  Status of docker-compose structure
-   Name               Command               State           Ports         
-  ------------------------------------------------------------------------
-  beat     celery beat --app=app:pyli ...   Up                            
-  flower   celery flower --app=app:py ...   Up      0.0.0.0:80->80/tcp    
-  redis    docker-entrypoint.sh redis ...   Up      0.0.0.0:6379->6379/tcp
-  worker   celery worker --app=app:py ...   Up                            
-  ```
 
+  Status of docker-compose structure
+   Name               Command               State           Ports
+  ------------------------------------------------------------------------
+  beat     celery beat --app=app:pyli ...   Up
+  flower   celery flower --app=app:py ...   Up      0.0.0.0:80->80/tcp
+  redis    docker-entrypoint.sh redis ...   Up      0.0.0.0:6379->6379/tcp
+  worker   celery worker --app=app:py ...   Up
+  ```
 
 ### 5) Manage your jobs:
 
@@ -145,7 +145,7 @@ Take note that there's a function that define the schedule and you shoud change 
 
   ```sh
   ./manage.py job list
-  
+
   -> jobs@worker: OK
       * jobs.test_job.task
   ```
@@ -196,7 +196,7 @@ All container logs (INFO level by default) are available in logs directory:
 ```sh
 cat logs/celeryworker.log
 
-[2020-01-28 20:14:59,629: INFO/MainProcess] Received task: jobs.test_job.task[ec0d712a-7ff1-4e54-a4a1-e94270796517]  
+[2020-01-28 20:14:59,629: INFO/MainProcess] Received task: jobs.test_job.task[ec0d712a-7ff1-4e54-a4a1-e94270796517]
 [2020-01-28 20:14:59,787: WARNING/ForkPoolWorker-7] Starting:  test_job
 [2020-01-28 20:14:59,893: WARNING/ForkPoolWorker-7] My result from a not so complex logic
 [2020-01-28 20:14:59,894: WARNING/ForkPoolWorker-7] Ending: test_job
@@ -209,7 +209,7 @@ cat logs/celeryworker.log
 
   ```sh
   ./manage.py schedule start-all
-  
+
   Starting all schedules from jobs...
   Schedule of test_job: True
   ```
