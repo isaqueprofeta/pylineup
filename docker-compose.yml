@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 
 volumes:
   redis_data:
@@ -22,9 +22,15 @@ services:
       context: .
     volumes:
       - ./:/pylineup
-    command: ["celery", "worker", "--app=pylineup", "--hostname=jobs@worker",
-              "--loglevel=INFO", "--pidfile=/tmp/celeryworker.pid",
-              "--logfile=/pylineup/logs/celeryworker.log"]
+    command:
+      [
+        "celery",
+        "worker",
+        "--app=pylineup",
+        "--hostname=jobs@worker",
+        "--loglevel=INFO",
+        "--pidfile=/tmp/celeryworker.pid",
+      ]
     depends_on:
       - redis
     stdin_open: true
@@ -38,9 +44,14 @@ services:
       context: .
     volumes:
       - ./:/pylineup
-    command: ["celery", "beat", "--app=pylineup",
-              "--pidfile=/tmp/celerybeat.pid", "--loglevel=INFO",
-              "--logfile=/pylineup/logs/celerybeat.log"]
+    command:
+      [
+        "celery",
+        "beat",
+        "--app=pylineup",
+        "--pidfile=/tmp/celerybeat.pid",
+        "--loglevel=INFO",
+      ]
     depends_on:
       - worker
       - redis
@@ -55,12 +66,18 @@ services:
       context: .
     volumes:
       - ./:/pylineup
-    command: ["celery", "flower", "--app=pylineup", "--port=80",
-              "--broker=redis://redis:6379/0",
-              "--broker_api=redis://redis:6379/0",
-              "--basic_auth=admin:admin"]
+    command:
+      [
+        "celery",
+        "flower",
+        "--app=pylineup",
+        "--port=8080",
+        "--broker=redis://redis:6379/0",
+        "--broker_api=redis://redis:6379/0",
+        "--basic_auth=admin:admin",
+      ]
     ports:
-      - 80:80
+      - 80:8080
     depends_on:
       - worker
       - beat
