@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3-alpine
 
 RUN apk add --no-cache tzdata
 ENV TZ America/Sao_Paulo

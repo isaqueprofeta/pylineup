@@ -25,8 +25,8 @@ services:
     command:
       [
         "celery",
-        "worker",
         "--app=pylineup",
+        "worker",
         "--hostname=jobs@worker",
         "--loglevel=INFO",
         "--pidfile=/tmp/celeryworker.pid",
@@ -47,8 +47,8 @@ services:
     command:
       [
         "celery",
-        "beat",
         "--app=pylineup",
+        "beat",
         "--pidfile=/tmp/celerybeat.pid",
         "--loglevel=INFO",
       ]
@@ -69,8 +69,8 @@ services:
     command:
       [
         "celery",
-        "flower",
         "--app=pylineup",
+        "flower",
         "--port=8080",
         "--broker=redis://redis:6379/0",
         "--broker_api=redis://redis:6379/0",

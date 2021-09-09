@@ -4,3 +4,4 @@ wheels/
 .vscode/
 config.ini
 .env
+.venv/
