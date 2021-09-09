@@ -20,6 +20,7 @@ services:
     restart: unless-stopped
     build:
       context: .
+    image: pylineup:1
     volumes:
       - ./:/pylineup
     command:
@@ -40,8 +41,7 @@ services:
     container_name: beat
     hostname: beat
     restart: unless-stopped
-    build:
-      context: .
+    image: pylineup:1
     volumes:
       - ./:/pylineup
     command:
@@ -62,8 +62,7 @@ services:
     container_name: flower
     hostname: flower
     restart: unless-stopped
-    build:
-      context: .
+    image: pylineup:1
     volumes:
       - ./:/pylineup
     command:
