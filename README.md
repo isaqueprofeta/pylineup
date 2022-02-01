@@ -92,6 +92,12 @@ Take note that there's a function that define the schedule and you shoud change 
 
 ### 3) Manage the framework:
 
+- Build the container image for docker
+
+  ```sh
+  docker-compose build
+  ```
+
 - Setup the docker-compose manually or with the helper:
 
   ```sh
