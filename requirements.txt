@@ -1,4 +1,4 @@
 celery==5.2.7
-flower==1.0.0
+flower==1.2.0
 redis==3.5.3
 redisbeat==1.2.4
