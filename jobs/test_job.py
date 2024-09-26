@@ -6,7 +6,7 @@ import os
 job_name = os.path.splitext(os.path.basename(__file__))[0]
 logger = get_task_logger(__name__)
 
-MY_SCHEDULE = timedelta(seconds=300)
+MY_SCHEDULE = timedelta(seconds=30)
 
 
 def schedule():

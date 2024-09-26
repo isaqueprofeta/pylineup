@@ -1,6 +1,15 @@
-FROM python:3-alpine
+FROM python:3.11-alpine
 
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache --virtual \
+        .build-deps \
+        gcc \
+        g++ \
+        musl-dev \
+        python3-dev \
+        cython \
+        libffi-dev \
+        tzdata
+
 ENV TZ America/Sao_Paulo
 
 ADD requirements.txt /tmp
